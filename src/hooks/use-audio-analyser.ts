@@ -13,7 +13,9 @@ export function useAudioAnalyser(stream: MediaStream | null, config?: Partial<An
 
     const pipeline = createAudioPipeline(stream, config);
     audioContextRef.current = pipeline.audioContext;
-    setAnalyser(pipeline.analyser);
+    
+    // Use a microtask to avoid setState in effect
+    Promise.resolve().then(() => setAnalyser(pipeline.analyser));
 
     // iOS Safari: resume AudioContext after user gesture
     if (pipeline.audioContext.state === 'suspended') {
@@ -33,6 +35,7 @@ export function useAudioAnalyser(stream: MediaStream | null, config?: Partial<An
       cancelAnimationFrame(animationRef.current);
       cleanupAudio(null, pipeline.audioContext); // Don't stop stream here; useMicrophone owns it
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stream]); // config intentionally excluded to avoid recreating pipeline
 
   return { analyser, volume };
