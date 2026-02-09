@@ -53,7 +53,7 @@ export function SpectrumViz({ analyser, isActive, isDark = false }: SpectrumVizP
   return (
     <canvas
       ref={canvasRef}
-      className="w-full h-40 rounded-lg bg-slate-100 dark:bg-slate-800"
+      className="w-full h-32 sm:h-40 rounded-lg bg-slate-100 dark:bg-slate-800"
       aria-label="Audio frequency spectrum visualization"
       role="img"
     />

@@ -12,9 +12,10 @@ import PermissionStep from './components/flow/permission-step';
 import DeviceSelect from './components/flow/device-select';
 import TestingPhase from './components/flow/testing-phase';
 import ResultsPanel from './components/flow/results-panel';
-import PermissionStatusBadge from './components/common/permission-status-badge';
 import BrowserInfoCard from './components/common/browser-info-card';
 import ErrorBanner from './components/common/error-banner';
+import { Header } from './components/common/header';
+import { Footer } from './components/common/footer';
 
 // Types
 import type { TestMetrics, AudioCapabilities } from './types/audio';
@@ -174,30 +175,30 @@ function AppContent() {
   const browserInfo = useBrowserInfo();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
-      {/* Header with persistent permission badge */}
-      <header className="border-b border-slate-300 dark:border-slate-700">
-        <div className="container mx-auto px-4 py-4 max-w-3xl flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Microphone Test</h1>
-          <PermissionStatusBadge status={status} />
-        </div>
-      </header>
+    <div className="min-h-screen bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      {/* Header with persistent permission badge and theme toggle */}
+      <Header permissionStatus={status} />
 
-      <main className="container mx-auto px-4 py-8 max-w-3xl space-y-6">
+      <main role="main" aria-label="Microphone Test" className="container mx-auto px-4 py-8 max-w-3xl">
         {/* Browser info card */}
         <BrowserInfoCard browserInfo={browserInfo} />
 
-        {/* Error banner */}
-        {state.error && (
-          <ErrorBanner
-            message={state.error}
-            onDismiss={() => dispatch({ type: 'CLEAR_ERROR' })}
-          />
-        )}
+        <div aria-live="polite" className="space-y-6 mt-6">
+          {/* Error banner */}
+          {state.error && (
+            <ErrorBanner
+              message={state.error}
+              onDismiss={() => dispatch({ type: 'CLEAR_ERROR' })}
+            />
+          )}
 
-        {/* Flow router */}
-        <FlowRouter />
+          {/* Flow router */}
+          <FlowRouter />
+        </div>
       </main>
+
+      {/* Footer with privacy note */}
+      <Footer />
     </div>
   );
 }

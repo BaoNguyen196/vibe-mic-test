@@ -54,7 +54,7 @@ export function VolumeMeter({ volume, isActive, isDark = false }: VolumeMeterPro
     <div>
       <canvas
         ref={canvasRef}
-        className="w-full h-6 rounded-full"
+        className="w-full h-5 sm:h-6 rounded-full"
         aria-label={`Volume level: ${Math.round(volume.rms * 100)}%`}
         role="meter"
         aria-valuemin={0}

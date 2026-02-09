@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useMicrophone } from '../../hooks/use-microphone';
 import { useAudioAnalyser } from '../../hooks/use-audio-analyser';
 import { useRecorder } from '../../hooks/use-recorder';
+import { useTheme } from '../../hooks/use-theme';
 import { getTrackCapabilities } from '../../services/audio-service';
 import { WaveformViz } from '../audio/waveform-viz';
 import { VolumeMeter } from '../audio/volume-meter';
@@ -32,6 +33,7 @@ export default function TestingPhase({
 }: TestingPhaseProps) {
   const [timeRemaining, setTimeRemaining] = useState(testDuration);
   const [isActive, setIsActive] = useState(false);
+  const { isDark } = useTheme();
   
   // Track volume metrics for test results
   const metricsRef = useRef({
@@ -154,18 +156,18 @@ export default function TestingPhase({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Recording Indicator */}
       <div className="flex items-center justify-center gap-3 bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-        <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse" />
-        <span className="text-slate-900 dark:text-slate-100 font-medium">
+        <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse" aria-hidden="true" />
+        <span className="text-slate-900 dark:text-slate-100 font-medium" role="status" aria-live="polite">
           Recording...
         </span>
       </div>
 
       {/* Timer */}
       <div className="text-center">
-        <div className="text-5xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
+        <div className="text-5xl font-bold text-slate-900 dark:text-slate-100 tabular-nums" role="timer" aria-live="polite">
           {timeRemaining}s
         </div>
         <p className="text-slate-600 dark:text-slate-400 mt-2">
@@ -180,21 +182,21 @@ export default function TestingPhase({
             <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Waveform
             </h3>
-            <WaveformViz analyser={analyser} isActive={isActive} />
+            <WaveformViz analyser={analyser} isActive={isActive} isDark={isDark} />
           </div>
 
           <div>
             <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Volume Level
             </h3>
-            <VolumeMeter volume={volume} isActive={isActive} />
+            <VolumeMeter volume={volume} isActive={isActive} isDark={isDark} />
           </div>
 
           <div>
             <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Frequency Spectrum
             </h3>
-            <SpectrumViz analyser={analyser} isActive={isActive} />
+            <SpectrumViz analyser={analyser} isActive={isActive} isDark={isDark} />
           </div>
         </div>
       )}
@@ -203,7 +205,10 @@ export default function TestingPhase({
       <button
         onClick={handleStopTest}
         disabled={!isActive}
-        className="w-full px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
+        className="w-full px-6 py-3 bg-red-600 text-white rounded-lg font-medium 
+                   hover:bg-red-700 disabled:bg-slate-400 disabled:cursor-not-allowed 
+                   transition-colors
+                   focus:outline-none focus:ring-2 focus:ring-red-500"
       >
         Stop Test
       </button>

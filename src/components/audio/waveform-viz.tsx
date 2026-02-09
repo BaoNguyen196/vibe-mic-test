@@ -53,7 +53,7 @@ export function WaveformViz({ analyser, isActive, isDark = false }: WaveformVizP
   return (
     <canvas
       ref={canvasRef}
-      className="w-full h-32 rounded-lg bg-slate-100 dark:bg-slate-800"
+      className="w-full h-24 sm:h-32 rounded-lg bg-slate-100 dark:bg-slate-800"
       aria-label="Audio waveform visualization"
       role="img"
     />

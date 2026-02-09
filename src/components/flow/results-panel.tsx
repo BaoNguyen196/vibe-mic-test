@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { TestMetrics, AudioCapabilities, BrowserInfo } from '../../types/audio';
 import type { PermissionStatus } from '../../types/state';
 import MicInfoTable from './mic-info-table';
@@ -26,6 +27,12 @@ export default function ResultsPanel({
   permissionStatus,
   onTestAgain,
 }: ResultsPanelProps) {
+  const ctaRef = useRef<HTMLButtonElement>(null);
+
+  // Auto-focus CTA button on mount
+  useEffect(() => {
+    ctaRef.current?.focus();
+  }, []);
   
   // Format level as percentage
   const formatLevel = (level: number) => {
@@ -33,7 +40,7 @@ export default function ResultsPanel({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       {/* Results Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
@@ -112,8 +119,11 @@ export default function ResultsPanel({
       {/* Actions */}
       <div className="flex gap-4">
         <button
+          ref={ctaRef}
           onClick={onTestAgain}
-          className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium 
+                     hover:bg-blue-700 transition-colors
+                     focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Test Again
         </button>

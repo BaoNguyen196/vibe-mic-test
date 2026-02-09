@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 interface ErrorBannerProps {
   message: string;
   onDismiss: () => void;
@@ -6,8 +8,21 @@ interface ErrorBannerProps {
 /**
  * Dismissible error banner with red styling
  * Shows at the top of the flow area with ARIA alert role
+ * Dismissible with Escape key
  */
 export default function ErrorBanner({ message, onDismiss }: ErrorBannerProps) {
+  // Handle Escape key to dismiss
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onDismiss();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onDismiss]);
+
   return (
     <div
       role="alert"
@@ -37,8 +52,10 @@ export default function ErrorBanner({ message, onDismiss }: ErrorBannerProps) {
       {/* Dismiss Button */}
       <button
         onClick={onDismiss}
-        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 flex-shrink-0"
-        aria-label="Dismiss error"
+        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 
+                   flex-shrink-0 
+                   focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
+        aria-label="Dismiss error (press Escape)"
       >
         <svg
           className="w-5 h-5"

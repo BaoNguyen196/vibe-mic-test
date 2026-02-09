@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { PermissionStatus } from '../../types/state';
 
 interface PermissionStepProps {
@@ -15,6 +16,12 @@ function PermissionStep({
   error,
   isLoading,
 }: PermissionStepProps) {
+  const ctaRef = useRef<HTMLButtonElement>(null);
+
+  // Auto-focus CTA button on mount
+  useEffect(() => {
+    ctaRef.current?.focus();
+  }, []);
   // Loading state
   if (isLoading) {
     return (
@@ -28,7 +35,7 @@ function PermissionStep({
   // Granted state
   if (status === 'granted') {
     return (
-      <div className="border border-green-500 bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+      <div className="border border-green-500 bg-green-50 dark:bg-green-900/20 rounded-lg p-6 animate-fade-in">
         <div className="flex items-center mb-4">
           <span className="text-green-600 dark:text-green-400 text-2xl mr-3">✓</span>
           <div>
@@ -42,8 +49,11 @@ function PermissionStep({
         </div>
         {onContinue && (
           <button
+            ref={ctaRef}
             onClick={onContinue}
-            className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200"
+            className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg 
+                       transition-colors duration-200 
+                       focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             Continue to Device Selection
           </button>
@@ -55,7 +65,7 @@ function PermissionStep({
   // Denied state
   if (status === 'denied') {
     return (
-      <div className="border border-red-500 bg-red-50 dark:bg-red-900/20 rounded-lg p-6">
+      <div className="border border-red-500 bg-red-50 dark:bg-red-900/20 rounded-lg p-6 animate-fade-in">
         <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-3">
           Microphone Blocked
         </h3>
@@ -89,7 +99,7 @@ function PermissionStep({
 
   // Prompt or unknown state - request permission
   return (
-    <div className="border border-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+    <div className="border border-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 animate-fade-in">
       <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
         Test Your Microphone
       </h3>
@@ -98,8 +108,11 @@ function PermissionStep({
         permission.
       </p>
       <button
+        ref={ctaRef}
         onClick={onRequestPermission}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg 
+                   transition-colors duration-200 
+                   focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         Test My Microphone
       </button>

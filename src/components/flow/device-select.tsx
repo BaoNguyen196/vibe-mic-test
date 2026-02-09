@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { AudioDeviceInfo } from '../../types/audio';
 
 interface DeviceSelectProps {
@@ -8,6 +9,12 @@ interface DeviceSelectProps {
 }
 
 function DeviceSelect({ devices, selected, onSelect, onContinue }: DeviceSelectProps) {
+  const ctaRef = useRef<HTMLButtonElement>(null);
+
+  // Auto-focus CTA button on mount
+  useEffect(() => {
+    ctaRef.current?.focus();
+  }, []);
   // No devices found state
   if (devices.length === 0) {
     return (
@@ -28,7 +35,7 @@ function DeviceSelect({ devices, selected, onSelect, onContinue }: DeviceSelectP
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       <div>
         <label
           htmlFor="device-select"
@@ -58,9 +65,13 @@ function DeviceSelect({ devices, selected, onSelect, onContinue }: DeviceSelectP
         </select>
       </div>
       <button
+        ref={ctaRef}
         onClick={onContinue}
         disabled={!selected}
-        className="bg-green-600 hover:bg-green-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 disabled:opacity-50"
+        className="bg-green-600 hover:bg-green-700 disabled:bg-slate-400 disabled:cursor-not-allowed 
+                   text-white font-medium px-6 py-3 rounded-lg 
+                   transition-colors duration-200 disabled:opacity-50
+                   focus:outline-none focus:ring-2 focus:ring-green-500"
       >
         Continue to Test
       </button>
