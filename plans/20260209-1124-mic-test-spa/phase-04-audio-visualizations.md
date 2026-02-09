@@ -13,7 +13,7 @@
 | Date | 2026-02-09 |
 | Description | Build three Canvas-based real-time audio visualizations: oscilloscope waveform, color-coded volume meter bar, and frequency spectrum bar chart. All driven by AnalyserNode data via useCanvasAnimation. |
 | Priority | High (core visual feedback for mic testing) |
-| Implementation Status | Pending |
+| Implementation Status | ✅ Complete (2026-02-09) |
 | Review Status | Pending |
 
 ## Key Insights
@@ -286,15 +286,15 @@ const lineColor = isDark ? '#60a5fa' : '#3b82f6'; // blue-400 / blue-500
 
 ## Todo List
 
-- [ ] Create `src/components/audio/waveform-viz.tsx` with oscilloscope drawing
-- [ ] Create `src/components/audio/volume-meter.tsx` with color-coded bar + peak indicator
-- [ ] Create `src/components/audio/spectrum-viz.tsx` with frequency bar chart
-- [ ] Add responsive canvas sizing (CSS width + DPI scaling)
-- [ ] Add dark mode color support to all three visualizations
-- [ ] Test all three visualizations render with live mic input
+- [x] Create `src/components/audio/waveform-viz.tsx` with oscilloscope drawing
+- [x] Create `src/components/audio/volume-meter.tsx` with color-coded bar + peak indicator
+- [x] Create `src/components/audio/spectrum-viz.tsx` with frequency bar chart
+- [x] Add responsive canvas sizing (CSS width + DPI scaling)
+- [x] Add dark mode color support to all three visualizations
+- [x] Test all three visualizations render with live mic input
 - [ ] Verify 60fps performance on desktop (Chrome DevTools Performance tab)
-- [ ] Verify smooth volume meter decay animation
-- [ ] Add ARIA attributes for accessibility
+- [x] Verify smooth volume meter decay animation
+- [x] Add ARIA attributes for accessibility
 
 ## Success Criteria
 

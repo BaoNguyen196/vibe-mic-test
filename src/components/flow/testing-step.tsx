@@ -1,7 +1,8 @@
-import { useRef } from 'react';
 import { useMicrophone } from '../../hooks/use-microphone';
 import { useAudioAnalyser } from '../../hooks/use-audio-analyser';
-import { useCanvasAnimation } from '../../hooks/use-canvas-animation';
+import { WaveformViz } from '../audio/waveform-viz';
+import { VolumeMeter } from '../audio/volume-meter';
+import { SpectrumViz } from '../audio/spectrum-viz';
 
 interface TestingStepProps {
   deviceId?: string;
@@ -11,47 +12,6 @@ interface TestingStepProps {
 export default function TestingStep({ deviceId, onBack }: TestingStepProps) {
   const { stream, error, isActive, start, stop } = useMicrophone();
   const { analyser, volume } = useAudioAnalyser(stream);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Simple waveform visualization
-  const drawWaveform = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
-    if (!analyser) return;
-
-    // Clear canvas
-    ctx.fillStyle = '#1e293b'; // slate-800
-    ctx.fillRect(0, 0, width, height);
-
-    // Get time domain data
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    analyser.getByteTimeDomainData(dataArray);
-
-    // Draw waveform
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = '#3b82f6'; // blue-500
-    ctx.beginPath();
-
-    const sliceWidth = width / bufferLength;
-    let x = 0;
-
-    for (let i = 0; i < bufferLength; i++) {
-      const v = dataArray[i]! / 128.0;
-      const y = (v * height) / 2;
-
-      if (i === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-
-      x += sliceWidth;
-    }
-
-    ctx.lineTo(width, height / 2);
-    ctx.stroke();
-  };
-
-  useCanvasAnimation(canvasRef, drawWaveform, isActive && analyser !== null);
 
   const handleStart = () => {
     start(deviceId);
@@ -60,10 +20,6 @@ export default function TestingStep({ deviceId, onBack }: TestingStepProps) {
   const handleStop = () => {
     stop();
   };
-
-  // Calculate volume percentage (0-100)
-  const volumePercent = Math.round(volume.rms * 100);
-  const dbDisplay = volume.db === -Infinity ? '-∞' : volume.db.toFixed(1);
 
   return (
     <div className="space-y-6">
@@ -101,57 +57,27 @@ export default function TestingStep({ deviceId, onBack }: TestingStepProps) {
           </div>
         )}
 
+        {/* Status */}
+        <div className="mb-4 text-sm text-slate-600 dark:text-slate-400">
+          Status: {isActive ? '🎤 Recording active' : '⏸️ Stopped'}
+        </div>
+
         {/* Waveform visualization */}
-        <div className="mb-4">
-          <h3 className="text-sm font-medium mb-2">Waveform</h3>
-          <canvas
-            ref={canvasRef}
-            className="w-full h-32 bg-slate-800 rounded-lg border border-slate-600"
-          />
+        <div className="mb-6">
+          <h3 className="text-sm font-medium mb-2">Oscilloscope Waveform</h3>
+          <WaveformViz analyser={analyser} isActive={isActive && analyser !== null} />
         </div>
 
         {/* Volume meter */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium">Volume Levels</h3>
-          
-          {/* RMS level */}
-          <div>
-            <div className="flex justify-between text-sm mb-1">
-              <span>RMS Level</span>
-              <span className="font-mono">{volumePercent}%</span>
-            </div>
-            <div className="w-full h-4 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-green-500 transition-all duration-100"
-                style={{ width: `${volumePercent}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Peak level */}
-          <div>
-            <div className="flex justify-between text-sm mb-1">
-              <span>Peak Level</span>
-              <span className="font-mono">{Math.round(volume.peak * 100)}%</span>
-            </div>
-            <div className="w-full h-4 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-yellow-500 transition-all duration-100"
-                style={{ width: `${Math.round(volume.peak * 100)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Decibels */}
-          <div className="flex justify-between text-sm">
-            <span>Volume (dB)</span>
-            <span className="font-mono">{dbDisplay} dB</span>
-          </div>
+        <div className="mb-6">
+          <h3 className="text-sm font-medium mb-2">Volume Meter</h3>
+          <VolumeMeter volume={volume} isActive={isActive && analyser !== null} />
         </div>
 
-        {/* Status */}
-        <div className="mt-6 text-sm text-slate-600 dark:text-slate-400">
-          Status: {isActive ? '🎤 Recording active' : '⏸️ Stopped'}
+        {/* Frequency spectrum */}
+        <div className="mb-4">
+          <h3 className="text-sm font-medium mb-2">Frequency Spectrum</h3>
+          <SpectrumViz analyser={analyser} isActive={isActive && analyser !== null} />
         </div>
       </div>
     </div>
