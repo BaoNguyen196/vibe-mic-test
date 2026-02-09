@@ -6,9 +6,10 @@ import { usePermission } from './hooks/use-permission';
 import { useBrowserInfo } from './hooks/use-browser-info';
 import { useMediaDevices } from './hooks/use-media-devices';
 
-// Components from Phase 2C
+// Components from Phase 2C & Phase 3
 import PermissionStep from './components/flow/permission-step';
 import DeviceSelect from './components/flow/device-select';
+import TestingStep from './components/flow/testing-step';
 import PermissionStatusBadge from './components/common/permission-status-badge';
 import BrowserInfoCard from './components/common/browser-info-card';
 
@@ -21,6 +22,12 @@ function App() {
   const { status, isLoading, requestPermission } = usePermission();
   const browserInfo = useBrowserInfo();
   const { devices, selectedDevice, setSelectedDevice, refreshDevices } = useMediaDevices();
+
+  // Handle permission continue (when already granted)
+  const handlePermissionContinue = async () => {
+    await refreshDevices();
+    setStep('device-select');
+  };
 
   // Handle permission request
   const handleRequestPermission = async () => {
@@ -57,7 +64,12 @@ function App() {
 
   // Handle device selection continue
   const handleContinue = () => {
-    setStep('testing'); // Phase 03+ will implement testing step
+    setStep('testing');
+  };
+
+  // Handle back from testing
+  const handleBackToDeviceSelect = () => {
+    setStep('device-select');
   };
 
   return (
@@ -79,6 +91,7 @@ function App() {
           <PermissionStep
             status={status}
             onRequestPermission={handleRequestPermission}
+            onContinue={handlePermissionContinue}
             error={error}
             isLoading={isLoading}
           />
@@ -94,9 +107,10 @@ function App() {
         )}
 
         {step === 'testing' && (
-          <div className="text-center text-slate-500">
-            Testing step will be implemented in Phase 03.
-          </div>
+          <TestingStep
+            deviceId={selectedDevice?.deviceId}
+            onBack={handleBackToDeviceSelect}
+          />
         )}
       </main>
     </div>

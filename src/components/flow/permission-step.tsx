@@ -3,6 +3,7 @@ import type { PermissionStatus } from '../../types/state';
 interface PermissionStepProps {
   status: PermissionStatus;
   onRequestPermission: () => void;
+  onContinue?: () => void;
   error: string | null;
   isLoading: boolean;
 }
@@ -10,6 +11,7 @@ interface PermissionStepProps {
 function PermissionStep({
   status,
   onRequestPermission,
+  onContinue,
   error,
   isLoading,
 }: PermissionStepProps) {
@@ -27,7 +29,7 @@ function PermissionStep({
   if (status === 'granted') {
     return (
       <div className="border border-green-500 bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
-        <div className="flex items-center">
+        <div className="flex items-center mb-4">
           <span className="text-green-600 dark:text-green-400 text-2xl mr-3">✓</span>
           <div>
             <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
@@ -38,6 +40,14 @@ function PermissionStep({
             </p>
           </div>
         </div>
+        {onContinue && (
+          <button
+            onClick={onContinue}
+            className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200"
+          >
+            Continue to Device Selection
+          </button>
+        )}
       </div>
     );
   }
